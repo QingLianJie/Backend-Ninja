@@ -24,7 +24,7 @@ SECRET_KEY = ')6tvt1@c41m0vx-^o6cn80ohng(1t1%y&(90&5^-w@uoadb_d$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["*", "qinglianjie.cn", "dev.qinglianjie.cn", "ninja.qinglianjie.cn"]
 
 # Application definition
 
@@ -42,16 +42,21 @@ INSTALLED_APPS = [
     'courses',
     'scores',
     'upload',
+
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'qinglianjie_ninja.middleware.DisableCSRF',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'qinglianjie_ninja.urls'
@@ -142,3 +147,13 @@ EMAIL_USE_SSL = True
 EMAIL_FROM = 'bakedviolin@foxmail.com'
 DEFAULT_FROM_EMAIL = 'bakedviolin@foxmail.com'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# CSRF
+
+CORS_ORIGIN_REGEX_WHITELIST = [
+    r"^https://\w+\.qinglianjie\.cn$",
+    r"^https://qinglianjie\.cn$",
+    r"^https://qinglianjie\.vercel\.app$"
+]
+CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_SECURE = True
