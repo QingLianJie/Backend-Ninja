@@ -140,13 +140,13 @@ logging.basicConfig(
 
 # Email
 
-EMAIL_HOST = 'smtp.qq.com'
+EMAIL_HOST = 'smtpdm.aliyun.com'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'bakedviolin@foxmail.com'
+EMAIL_HOST_USER = 'admin@qinglianjie.cn'
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
 EMAIL_USE_SSL = True
-EMAIL_FROM = 'bakedviolin@foxmail.com'
-DEFAULT_FROM_EMAIL = 'bakedviolin@foxmail.com'
+EMAIL_FROM = 'admin@qinglianjie.cn'
+DEFAULT_FROM_EMAIL = 'admin@qinglianjie.cn'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # CSRF
