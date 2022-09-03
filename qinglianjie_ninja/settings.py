@@ -38,10 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'qinglianjie_auth',
-    'comments',
+    'comment',
     'common',
-    'courses',
-    'scores',
+    'course',
+    'score',
     'upload',
 
     "corsheaders",

@@ -33,11 +33,16 @@ class UserRegisterSchema(ModelSchema):
         model_fields = ['email', "username"]
 
 
-class PasswordChangeInputSchema(Schema):
+class RequestPasswordResetInputSchema(Schema):
     email: str
 
 
 class PasswordResetInputSchema(Schema):
     email: str
     verify_code: str
+    new_password: str = Field(min_length=8, max_length=24)
+
+
+class PasswordChangeInputSchema(Schema):
+    old_password: str = Field(min_length=8, max_length=24)
     new_password: str = Field(min_length=8, max_length=24)

@@ -3,6 +3,7 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
+import django.utils.timezone
 
 
 class Migration(migrations.Migration):
@@ -11,16 +12,21 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('course', '0001_initial'),
         ('common', '0001_initial'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='PasswordResetVerifyCode',
+            name='CourseComment',
             fields=[
                 ('basemodel_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='common.basemodel')),
-                ('verify_code', models.CharField(max_length=24, verbose_name='验证码')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='请求重置密码的用户')),
+                ('content', models.TextField(max_length=100)),
+                ('created', models.DateTimeField(default=django.utils.timezone.now)),
+                ('anonymous', models.BooleanField(default=False)),
+                ('anonymous_name', models.CharField(db_index=True, default='匿名', max_length=32)),
+                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='course.courseinfo')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             bases=('common.basemodel',),
         ),

@@ -1,5 +1,3 @@
-import datetime
-import logging
 import random
 
 import django
@@ -11,16 +9,16 @@ from django.utils import timezone
 from ninja import Router, Body
 from ninja.security import django_auth
 
+from qinglianjie_auth import logger
 from qinglianjie_auth.consts import AUTH_VERIFY_CODE_EXPIRE_SECONDS, AUTH_VERIFY_CODE_LENGTH, \
     AUTH_RESET_PASSWORD_EMAIL_TITLE, AUTH_RESET_PASSWORD_EMAIL_BODY
 from qinglianjie_auth.models import PasswordResetVerifyCode
 from qinglianjie_auth.schemas import UsernameLoginSchema, UserRegisterSchema, UserBaseSchema, EmailLoginSchema, \
-    PasswordChangeInputSchema, PasswordResetInputSchema
+    RequestPasswordResetInputSchema, PasswordResetInputSchema, PasswordChangeInputSchema
 from common.schemas import Error
 from qinglianjie_ninja.settings import EMAIL_FROM
 
 router = Router(tags=["Auth"])
-logger = logging.getLogger(__name__)
 
 
 @router.post("/register", response={200: UserBaseSchema, 400: Error}, description="注册账户")
@@ -69,8 +67,25 @@ def me(request):
     return request.user
 
 
-@router.post("/password/change", description="请求重置密码", response={204: None, 404: Error, 400: Error}, auth=None)
+@router.post("/password/change", auth=django_auth, description="修改密码", response={400: Error, 204: None})
 def change_password(request, data: PasswordChangeInputSchema):
+    if data.old_password == data.new_password:
+        return 400, {"detail": "新旧密码不能相同！"}
+
+    user = request.user
+    user_temp = authenticate(username=user.username, password=data.old_password)
+    if user_temp is None or user.id != user_temp.id:
+        return 400, {"detail": "旧密码错误！"}
+
+    # 修改密码
+    with transaction.atomic():
+        user.set_password(data.new_password)
+        user.save()
+    return 204, None
+
+
+@router.post("/password/reset", description="请求重置密码", response={204: None, 404: Error, 400: Error}, auth=None)
+def request_reset_password(request, data: RequestPasswordResetInputSchema):
     try:
         user = User.objects.get(email=data.email)
     except django.contrib.auth.models.User.DoesNotExist as e:
@@ -102,7 +117,7 @@ def change_password(request, data: PasswordChangeInputSchema):
     return 204, None
 
 
-@router.post("/password/reset", description="重置密码", auth=None, response={204: None, 400: Error})
+@router.put("/password/reset", description="重置密码", auth=None, response={204: None, 400: Error})
 def reset_password(request, data: PasswordResetInputSchema):
     try:
         verify_code_record = PasswordResetVerifyCode.objects.get(verify_code=data.verify_code)

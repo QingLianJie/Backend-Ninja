@@ -18,10 +18,14 @@ from django.urls import path
 from ninja import NinjaAPI
 
 from qinglianjie_auth.api import router as qinglianjie_auth_router
+from upload.api import router as upload_router
+from course.api import router as course_router
 
 api = NinjaAPI(csrf=True)
 
 api.add_router("/auth/", qinglianjie_auth_router)
+api.add_router("/upload/", upload_router)
+api.add_router("/course/", course_router)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
