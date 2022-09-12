@@ -9,6 +9,7 @@ from django.utils import timezone
 from ninja import Router, Body
 from ninja.security import django_auth
 
+from comment.models import AnonymousAlias
 from qinglianjie_auth import logger
 from qinglianjie_auth.consts import AUTH_VERIFY_CODE_EXPIRE_SECONDS, AUTH_VERIFY_CODE_LENGTH, \
     AUTH_RESET_PASSWORD_EMAIL_TITLE, AUTH_RESET_PASSWORD_EMAIL_BODY
@@ -23,10 +24,10 @@ router = Router(tags=["Auth"])
 
 @router.post("/register", response={200: UserBaseSchema, 400: Error}, description="注册账户")
 def register(request, data: UserRegisterSchema):
-    if User.objects.filter(username=data.username).count() != 0:
-        return 400, {'detail': "用户名已被占用"}
-    if User.objects.filter(email=data.email).count() != 0:
-        return 400, {'detail': "邮箱已被占用"}
+    if User.objects.filter(username=data.username).count() != 0 \
+            or AnonymousAlias.objects.filter(alias=data.username).count() != 0 \
+            or User.objects.filter(email=data.email).count() != 0:
+        return 400, {'detail': "用户名或邮箱已被占用"}
     user = User.objects.create_user(**data.dict())
     return 200, user
 

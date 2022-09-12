@@ -1,9 +1,10 @@
 import datetime
-from typing import Dict
+from typing import Dict, List
 
 from ninja import Schema, ModelSchema
 from pydantic import Json
 
+from comment.schemas import CourseCommentResponseSchema
 from course.models import CourseInfo
 
 
@@ -32,3 +33,9 @@ class CourseStatisticsRecordSchema(Schema):
 class CourseStatisticsResultSchema(Schema):
     course: CourseInfoSchema
     statistics: Json[Dict[str, CourseStatisticsRecordSchema]]
+
+
+# 用于渲染课程详细页面的接口数据格式
+class CourseInfoPageResponseSchema(CourseStatisticsResultSchema):
+    comments: List[CourseCommentResponseSchema]
+    more_comments: bool
