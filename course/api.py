@@ -29,7 +29,7 @@ def get_course_detailed_info_by_course_id(request, course_id: str):
         return 404, {'detail': "课程 id 不存在"}
 
 
-@router.get("/search", response=List[CourseInfoSchema])
+@router.get("/search/", response=List[CourseInfoSchema])
 @paginate
 def search_course(request,
                   content: str = "",
@@ -49,13 +49,13 @@ def search_course(request,
     return [CourseInfoSchema.from_orm(x) for x in results]
 
 
-@router.get("/all", response=List[CourseInfoSchema])
+@router.get("/all/", response=List[CourseInfoSchema])
 @paginate
 def get_all_courses(request):
     return [CourseInfoSchema.from_orm(x) for x in CourseInfo.objects.all()]
 
 
 if settings.DEBUG:
-    @router.get("/statistics/all", response=List[CourseStatisticsResultSchema], description="!!!测试用接口!!!", summary="!!!测试用接口!!!")
+    @router.get("/statistics/all/", response=List[CourseStatisticsResultSchema], description="!!!测试用接口!!!", summary="!!!测试用接口!!!")
     def get_all_courses_statistics(request):
         return [CourseStatisticsResultSchema.from_orm(x) for x in CourseStatisticsResult.objects.all()]

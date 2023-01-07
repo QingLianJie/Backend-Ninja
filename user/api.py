@@ -14,7 +14,7 @@ from user.schemas import UserInfoSchema, UserFullInfoSchema
 router = Router(tags=["User"])
 
 
-@router.get("/me", auth=django_auth, response=UserFullInfoSchema)
+@router.get("/me/", auth=django_auth, response=UserFullInfoSchema)
 def get_my_user_info(request):
     user: User = request.user
     user_info = UserFullInfoSchema.from_orm(user)
@@ -77,7 +77,7 @@ def get_user_info_by_username(request, username: str):
     return 200, user_info
 
 
-@router.get("/{username}/comments", response={200: List[CourseCommentResponseSchema], 400: Error})
+@router.get("/{username}/comments/", response={200: List[CourseCommentResponseSchema], 400: Error})
 def get_user_comments(request, username: str):
     try:
         user = User.objects.get(username=username)

@@ -22,7 +22,7 @@ from qinglianjie_ninja.settings import EMAIL_FROM
 router = Router(tags=["Auth"])
 
 
-@router.post("/register", response={200: UserBaseSchema, 400: Error}, description="注册账户")
+@router.post("/register/", response={200: UserBaseSchema, 400: Error}, description="注册账户")
 def register(request, data: UserRegisterSchema):
     if User.objects.filter(username=data.username).count() != 0 \
             or AnonymousAlias.objects.filter(alias=data.username).count() != 0 \
@@ -33,7 +33,7 @@ def register(request, data: UserRegisterSchema):
     return 200, user
 
 
-@router.post("/login/username", auth=None, response={200: UserBaseSchema, 400: Error}, description="通过用户名登陆")
+@router.post("/login/username/", auth=None, response={200: UserBaseSchema, 400: Error}, description="通过用户名登陆")
 def login_by_username(request, data: UsernameLoginSchema):
     user = authenticate(**data.dict())
     if user is not None and user.is_active:
@@ -42,7 +42,7 @@ def login_by_username(request, data: UsernameLoginSchema):
     return 400, {'detail': "用户名或密码错误"}
 
 
-@router.post("/login/email", auth=None, response={200: UserBaseSchema, 400: Error}, description="通过邮件登录")
+@router.post("/login/email/", auth=None, response={200: UserBaseSchema, 400: Error}, description="通过邮件登录")
 def login_by_email(request, data: EmailLoginSchema):
     try:
         username = User.objects.get(email=data.email).username
@@ -58,18 +58,18 @@ def login_by_email(request, data: EmailLoginSchema):
     return 400, {'detail': "邮箱或密码错误"}
 
 
-@router.delete("/logout", auth=django_auth, response={204: None}, description="登出当前账户")
+@router.delete("/logout/", auth=django_auth, response={204: None}, description="登出当前账户")
 def logout_api(request):
     logout(request)
     return 204, None
 
 
-# @router.get('/me', response=UserBaseSchema, auth=django_auth, description="返回当前登录用户信息")
+# @router.get('/me/', response=UserBaseSchema, auth=django_auth, description="返回当前登录用户信息")
 # def me(request):
 #     return request.user
 
 
-@router.post("/password/change", auth=django_auth, description="修改密码", response={400: Error, 204: None})
+@router.post("/password/change/", auth=django_auth, description="修改密码", response={400: Error, 204: None})
 def change_password(request, data: PasswordChangeInputSchema):
     if data.old_password == data.new_password:
         return 400, {"detail": "新旧密码不能相同！"}
@@ -86,7 +86,7 @@ def change_password(request, data: PasswordChangeInputSchema):
     return 204, None
 
 
-@router.post("/password/reset", description="请求重置密码", response={204: None, 404: Error, 400: Error}, auth=None)
+@router.post("/password/reset/", description="请求重置密码", response={204: None, 404: Error, 400: Error}, auth=None)
 def request_reset_password(request, data: RequestPasswordResetInputSchema):
     try:
         user = User.objects.get(email=data.email)
@@ -119,7 +119,7 @@ def request_reset_password(request, data: RequestPasswordResetInputSchema):
     return 204, None
 
 
-@router.put("/password/reset", description="重置密码", auth=None, response={204: None, 400: Error})
+@router.put("/password/reset/", description="重置密码", auth=None, response={204: None, 400: Error})
 def reset_password(request, data: PasswordResetInputSchema):
     try:
         verify_code_record = PasswordResetVerifyCode.objects.get(verify_code=data.verify_code)

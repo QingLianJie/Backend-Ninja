@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List
 
 from django.db import transaction
 
@@ -7,6 +7,7 @@ from course.schemas import CourseInfoSchema
 from score.schemas import ScoreRecordSchema
 from score.util import select_by_heu_username_hash
 from upload import logger
+from upload.models import UploadHashInfo
 from upload.schemas import UploadDataSchema
 
 
@@ -26,7 +27,16 @@ def extract_course_info_from_upload_data(data: UploadDataSchema):
                 logger.error(e)
 
 
-def update_course_statistics_result(data: UploadDataSchema):
+def update_course_statistics_result(data: UploadDataSchema, user_id: int):
+    # Undo previous course statistic upload by same user
+    info, created = UploadHashInfo.objects.get_or_create(user_id=user_id)
+    if not created:
+        pre_records = select_by_heu_username_hash(info.hash)
+        for record in pre_records:
+            record.update_statistics(undo=True)
+    info.hash = data.heu_username_hash
+    info.save()
+
     # Undo previous course statistic update
     pre_records = select_by_heu_username_hash(data.heu_username_hash)
     for record in pre_records:
