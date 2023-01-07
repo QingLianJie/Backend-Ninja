@@ -42,7 +42,7 @@ class ScoreUploadSchema(Schema):
 
 
 class UploadDataSchema(Schema):
-    score_hash: str  # score 的 MD5 摘要值
+    # score_hash: str  # score 的 MD5 摘要值
     heu_username_hash: str  # 学号经 MD5 摘要
     scores: List[ScoreUploadSchema]
     # date: datetime.datetime
