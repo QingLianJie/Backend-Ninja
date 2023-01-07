@@ -19,7 +19,7 @@ class CourseInfoSchema(ModelSchema):
             'test',  # 考查方式（考试、考查等）
             'credit',  # 学分
             'period',  # 学时
-            # 'count', # 学过的人数
+            'count' # 学过的人数
         ]
 
 
