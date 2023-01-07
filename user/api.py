@@ -26,7 +26,7 @@ def get_my_user_info(request):
     return 200, user_info
 
 
-@router.post("/avatar/", auth=django_auth, response={200: None, 400: Error})
+@router.post("/avatar/", auth=django_auth, response={200: str, 400: Error})
 def update_user_avatar(request, image: UploadedFile = File(...)):
     if str(image.content_type).split("/")[0] != 'image':
         return 400, {"detail": "请勿上传非图片文件"}
@@ -42,7 +42,7 @@ def update_user_avatar(request, image: UploadedFile = File(...)):
             print(e)
     photo_in_db.avatar = image
     photo_in_db.save()
-    return 200, None
+    return 200, photo_in_db.avatar.url
 
 
 @router.delete("/avatar/", auth=django_auth, response={200: None})
