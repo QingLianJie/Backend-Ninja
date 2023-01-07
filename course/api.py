@@ -13,22 +13,6 @@ from qinglianjie_ninja import settings
 router = Router(tags=["Course"])
 
 
-@router.get("/{course_id}/", response={404: Error, 200: CourseInfoPageResponseSchema})
-def get_course_detailed_info_by_course_id(request, course_id: str):
-    try:
-        statistics = CourseStatisticsResult.objects.get(course__id=course_id)
-        comments = CourseComment.objects.filter(course__id=course_id).order_by('-create_time')[:20]
-        more_comments: bool = CourseComment.objects.filter(course__id=course_id).count() >= 50
-        return CourseInfoPageResponseSchema(
-            course=statistics.course,
-            statistics=statistics.statistics,
-            comments=[CourseCommentResponseSchema.my_from_orm(x) for x in comments],
-            more_comments=more_comments,
-        )
-    except CourseStatisticsResult.DoesNotExist:
-        return 404, {'detail': "课程 id 不存在"}
-
-
 @router.get("/search/", response=List[CourseInfoSchema])
 @paginate
 def search_course(request,
@@ -53,6 +37,22 @@ def search_course(request,
 @paginate
 def get_all_courses(request):
     return [CourseInfoSchema.from_orm(x) for x in CourseInfo.objects.all()]
+
+
+@router.get("/{course_id}/", response={404: Error, 200: CourseInfoPageResponseSchema})
+def get_course_detailed_info_by_course_id(request, course_id: str):
+    try:
+        statistics = CourseStatisticsResult.objects.get(course__id=course_id)
+        comments = CourseComment.objects.filter(course__id=course_id).order_by('-create_time')[:20]
+        more_comments: bool = CourseComment.objects.filter(course__id=course_id).count() >= 50
+        return CourseInfoPageResponseSchema(
+            course=statistics.course,
+            statistics=statistics.statistics,
+            comments=[CourseCommentResponseSchema.my_from_orm(x) for x in comments],
+            more_comments=more_comments,
+        )
+    except CourseStatisticsResult.DoesNotExist:
+        return 404, {'detail': "课程 id 不存在"}
 
 
 if settings.DEBUG:
