@@ -29,6 +29,7 @@ def register(request, data: UserRegisterSchema):
             or User.objects.filter(email=data.email).count() != 0:
         return 400, {'detail': "用户名或邮箱已被占用"}
     user = User.objects.create_user(**data.dict())
+    login(request, user)
     return 200, user
 
 
@@ -63,9 +64,9 @@ def logout_api(request):
     return 204, None
 
 
-@router.get('/me', response=UserBaseSchema, auth=django_auth, description="返回当前登录用户信息")
-def me(request):
-    return request.user
+# @router.get('/me', response=UserBaseSchema, auth=django_auth, description="返回当前登录用户信息")
+# def me(request):
+#     return request.user
 
 
 @router.post("/password/change", auth=django_auth, description="修改密码", response={400: Error, 204: None})

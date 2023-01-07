@@ -88,7 +88,6 @@ def create_comment(request, course_id: str, data: CourseCommentRequestSchema):
 
     comment = CourseComment.objects.create(**data.dict(), course_id=course_id, user_id=user.id)
     comment.save()
-    print(comment)
     return 201, CourseCommentResponseSchema.my_from_orm(comment)
 
 

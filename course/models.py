@@ -12,7 +12,6 @@ class CourseInfo(Model):
     category = models.CharField(max_length=64, db_index=True)  # 课程分类（选修中的艺术修养与审美、创新创业类等）
     test = models.CharField(max_length=8, db_index=True)  # 考查方式（考试、考查等）
     credit = models.FloatField(db_index=True)  # 学分
-    nature = models.CharField(max_length=64, db_index=True)  # 课程性质（专业核心课程、自然科学与技术基础必修课等）
     period = models.FloatField(db_index=True)  # 学时
     count = models.IntegerField(default=0)  # 学过的人数
 

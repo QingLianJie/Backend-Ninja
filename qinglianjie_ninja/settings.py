@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'course',
     'score',
     'upload',
+    "user",
 
     "corsheaders",
 ]
@@ -158,3 +159,9 @@ CORS_ORIGIN_REGEX_WHITELIST = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_SECURE = True
+
+# Media(photo upload)
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MAX_AVATAR_SIZE = 10
+print(MEDIA_ROOT)

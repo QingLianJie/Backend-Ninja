@@ -18,7 +18,6 @@ class CourseInfoSchema(ModelSchema):
             'category',  # 课程分类（选修中的艺术修养与审美、创新创业类等）
             'test',  # 考查方式（考试、考查等）
             'credit',  # 学分
-            'nature',  # 课程性质（专业核心课程、自然科学与技术基础必修课等）
             'period',  # 学时
             # 'count', # 学过的人数
         ]

@@ -14,7 +14,7 @@ router = Router(tags=["Course"])
 
 
 @router.get("/{course_id}/", response={404: Error, 200: CourseInfoPageResponseSchema})
-def get_course_by_course_id(request, course_id: str):
+def get_course_detailed_info_by_course_id(request, course_id: str):
     try:
         statistics = CourseStatisticsResult.objects.get(course__id=course_id)
         comments = CourseComment.objects.filter(course__id=course_id).order_by('-create_time')[:20]
@@ -25,8 +25,7 @@ def get_course_by_course_id(request, course_id: str):
             comments=[CourseCommentResponseSchema.my_from_orm(x) for x in comments],
             more_comments=more_comments,
         )
-        return CourseInfoSchema.from_orm(course)
-    except CourseInfo.DoesNotExist:
+    except CourseStatisticsResult.DoesNotExist:
         return 404, {'detail': "课程 id 不存在"}
 
 
@@ -50,12 +49,13 @@ def search_course(request,
     return [CourseInfoSchema.from_orm(x) for x in results]
 
 
+@router.get("/all", response=List[CourseInfoSchema])
+@paginate
+def get_all_courses(request):
+    return [CourseInfoSchema.from_orm(x) for x in CourseInfo.objects.all()]
+
+
 if settings.DEBUG:
-    @router.get("/all", response=List[CourseInfoSchema])
-    def get_all_courses(request):
-        return [CourseInfoSchema.from_orm(x) for x in CourseInfo.objects.all()]
-
-
-    @router.get("/statistics/all", response=List[CourseStatisticsResultSchema])
+    @router.get("/statistics/all", response=List[CourseStatisticsResultSchema], description="!!!测试用接口!!!", summary="!!!测试用接口!!!")
     def get_all_courses_statistics(request):
         return [CourseStatisticsResultSchema.from_orm(x) for x in CourseStatisticsResult.objects.all()]

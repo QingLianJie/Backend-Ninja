@@ -16,7 +16,6 @@ class ScoreUploadSchema(Schema):
     name: str  # 课程名称
     id: str  # 课程 id
     type: str  # 类型（必修、选修等）
-    nature: str  # 课程性质（专业核心课程、自然科学与技术基础必修课等）
     test: TestEnum  # 考查方式（考试、考查等）
     from_: List[str]  # 考试性质（正常考试、缺考等）
     credit: float  # 学分

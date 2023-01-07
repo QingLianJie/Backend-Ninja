@@ -68,6 +68,11 @@ class ScoreRecordSchema(ModelSchema):
             # Save or remove change log to db
             self._del_in_db() if undo else self._save_in_db()
 
+            # Update course learned people count
+            course_in_db = CourseInfo.objects.select_for_update().get(id=self.course.id)
+            course_in_db.count += 1
+            course_in_db.save()
+
             logger.info(f"{'Undo' if undo else 'Update'}' [{self.course.id}]{self.course.name} course statistics:")
             logger.info(statistics_dict)
 
