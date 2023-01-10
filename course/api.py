@@ -33,12 +33,6 @@ def search_course(request,
     return [CourseInfoSchema.from_orm(x) for x in results]
 
 
-@router.get("/all/", response=List[CourseInfoSchema])
-@paginate
-def get_all_courses(request):
-    return [CourseInfoSchema.from_orm(x) for x in CourseInfo.objects.all()]
-
-
 @router.get("/{course_id}/", response={404: Error, 200: CourseInfoPageResponseSchema})
 def get_course_detailed_info_by_course_id(request, course_id: str):
     try:

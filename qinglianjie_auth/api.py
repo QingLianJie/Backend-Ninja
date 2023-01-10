@@ -137,6 +137,10 @@ def reset_password(request, data: PasswordResetInputSchema):
         verify_code_record.delete()
         return 400, {"detail": "验证码有误或不存在"}
 
+    user = authenticate(username=verify_code_record.user.username, password=data.new_password)
+    if not(user is None):
+        return 400, {"detail": "新密码不能与旧密码相同！"}
+
     with transaction.atomic():
         user = verify_code_record.user
         user.set_password(data.new_password)
